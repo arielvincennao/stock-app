@@ -1,0 +1,19 @@
+{
+  "name": "stock-app",
+  "version": "1.0.0",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:react\" \"npm run dev:electron\"",
+    "dev:react": "cd frontend && npm run dev",
+    "dev:electron": "wait-on http://localhost:5173 && electron ."
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "electron": "^41.2.0",
+    "electron-rebuild": "^3.2.9",
+    "wait-on": "^9.0.5"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.9.0"
+  }
+}

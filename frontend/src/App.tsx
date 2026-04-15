@@ -1,41 +1,70 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import './App.css'
-import { productosMercado, type ProductoMercado } from './data/productos'
+import { LoginView } from './components/LoginView'
+import { Pagination } from './components/Pagination'
+import { ProductForm } from './components/ProductForm'
+import { ProductList } from './components/ProductList'
+import { createProduct, fetchProducts } from './services/productApi'
+import { initialProductForm, type NuevoProducto, type ProductoDB } from './types/product'
+import { normalizeProductForm } from './utils/productFormat'
 
 function App() {
   const PRODUCTS_PER_PAGE = 10
-  const MIN_TOTAL_PAGES = 4
 
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [productos, setProductos] = useState(productosMercado)
+  const [productos, setProductos] = useState<ProductoDB[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [dashboardView, setDashboardView] = useState<'listado' | 'vender'>('listado')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [form, setForm] = useState<NuevoProducto>(initialProductForm)
 
-  const agregarProducto = () => {
-    const nuevoProducto: ProductoMercado = {
-      id: String(Date.now()),
-      nombre: 'Producto nuevo',
-      categoria: 'Sin categoria',
-      precio: '$ 0',
-      variacion: '+0.0%',
-      imagen: 'https://images.unsplash.com/photo-1584473457493-17c6f0d35f89?auto=format&fit=crop&w=200&q=80',
-      stock: 0,
+  const loadProducts = async () => {
+    try {
+      setLoading(true)
+      setError('')
+      const data = await fetchProducts()
+      setProductos(data)
+    } catch (fetchError) {
+      if (fetchError instanceof Error) {
+        setError(fetchError.message)
+      } else {
+        setError('No se pudieron cargar los productos desde database.db.')
+      }
+      console.error(fetchError)
+    } finally {
+      setLoading(false)
     }
-    setProductos((prev) => [nuevoProducto, ...prev])
   }
 
-  const totalPages = Math.max(MIN_TOTAL_PAGES, Math.ceil(productos.length / PRODUCTS_PER_PAGE))
-  const totalItemsNeeded = totalPages * PRODUCTS_PER_PAGE
-  const productosParaPaginar =
-    productos.length === 0
-      ? []
-      : Array.from({ length: totalItemsNeeded }, (_, index) => {
-          const productoBase = productos[index % productos.length]
-          return {
-            ...productoBase,
-            id: `${productoBase.id}-page-${index}`,
-          }
-        })
+  useEffect(() => {
+    void loadProducts()
+  }, [])
+
+  const agregarProducto = async () => {
+    const sanitizedForm = normalizeProductForm(form)
+    if (!sanitizedForm.name) {
+      setError('El nombre del producto es obligatorio.')
+      return
+    }
+
+    try {
+      setError('')
+      await createProduct(sanitizedForm)
+      setForm(initialProductForm)
+      await loadProducts()
+    } catch (addError) {
+      if (addError instanceof Error) {
+        setError(addError.message)
+      } else {
+        setError('No se pudo crear el producto en database.db.')
+      }
+      console.error(addError)
+    }
+  }
+
+  const totalPages = Math.max(1, Math.ceil(productos.length / PRODUCTS_PER_PAGE))
+  const productosParaPaginar = useMemo(() => productos, [productos])
   const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE
   const endIndex = startIndex + PRODUCTS_PER_PAGE
   const productosPaginados = productosParaPaginar.slice(startIndex, endIndex)
@@ -70,58 +99,22 @@ function App() {
                 <header className="dashboard-header">
                   <div>
                     <h1>Listado de productos</h1>
-                    <p>Visualiza rapidamente precios y variaciones de los productos destacados.</p>
-                  </div>
-                  <div className="header-actions">
-                    <button className="primary-btn" type="button" onClick={agregarProducto}>
-                      Agregar producto
-                    </button>
+                    <p>Productos guardados en SQLite (database.db) desde Electron.</p>
                   </div>
                 </header>
 
-                <section className="market-list" aria-label="Listado de productos">
-                  {productosPaginados.map((producto) => {
-                    const isPositive = producto.variacion.startsWith('+')
-                    return (
-                      <article className="market-item" key={producto.id}>
-                        <div className="market-main">
-                          <img className="market-image" src={producto.imagen} alt={producto.nombre} />
-                          <div>
-                            <h2>{producto.nombre}</h2>
-                            <p>{producto.categoria}</p>
-                            <span className="stock-badge">Stock: {producto.stock}</span>
-                          </div>
-                        </div>
-                        <div className="market-side">
-                          <div className="market-meta">
-                            <strong>{producto.precio}</strong>
-                            <span className={isPositive ? 'change up' : 'change down'}>{producto.variacion}</span>
-                          </div>
-                          <div className="market-actions">
-                            <button type="button" className="item-btn edit-btn">
-                              Modificar
-                            </button>
-                            <button type="button" className="item-btn delete-btn">
-                              Eliminar
-                            </button>
-                          </div>
-                        </div>
-                      </article>
-                    )
-                  })}
-                </section>
-                <nav className="pagination" aria-label="Paginado de productos">
-                  {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
-                    <button
-                      key={pageNumber}
-                      type="button"
-                      className={pageNumber === currentPage ? 'page-btn active' : 'page-btn'}
-                      onClick={() => setCurrentPage(pageNumber)}
-                    >
-                      {pageNumber}
-                    </button>
-                  ))}
-                </nav>
+                <ProductForm
+                  form={form}
+                  onChange={setForm}
+                  onSubmit={() => void agregarProducto()}
+                  onReload={() => void loadProducts()}
+                />
+
+                {loading && <p className="status-text">Cargando productos...</p>}
+                {error && <p className="error-text">{error}</p>}
+
+                <ProductList products={productosPaginados} loading={loading} />
+                <Pagination totalPages={totalPages} currentPage={currentPage} onChangePage={setCurrentPage} />
               </>
             ) : (
               <section className="sell-panel" aria-label="Panel de venta">
@@ -135,28 +128,7 @@ function App() {
     )
   }
 
-  return (
-    <main className="login-page">
-      <section className="login-card" aria-labelledby="login-title">
-        <div className="login-header">
-          <p className="login-kicker">Stock App</p>
-          <h1 id="login-title">Acceso al sistema</h1>
-        </div>
-        <form className="login-form" onSubmit={(event) => {
-          event.preventDefault()
-          setIsLoggedIn(true)
-        }}>
-          <label htmlFor="email">Correo</label>
-          <input id="email" name="email" type="email" placeholder="tu@email.com" />
-
-          <label htmlFor="password">Contrasena</label>
-          <input id="password" name="password" type="password" placeholder="********" />
-
-          <button type="submit">Entrar</button>
-        </form>
-      </section>
-    </main>
-  )
+  return <LoginView onLogin={() => setIsLoggedIn(true)} />
 }
 
 export default App
