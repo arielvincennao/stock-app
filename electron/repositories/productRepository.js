@@ -37,7 +37,53 @@ function createProduct(product) {
   };
 }
 
+function updateProduct(id, product) {
+  const payload = {
+    name: product.name ?? "",
+    price: Number(product.price ?? 0),
+    stock: Number(product.stock ?? 0),
+    image: product.image ?? "",
+    category: product.category ?? "",
+    variation: product.variation ?? "+0.0%",
+    code: product.code ?? "",
+  };
+
+  const result = db
+    .prepare(
+      "UPDATE products SET name = ?, price = ?, stock = ?, image = ?, category = ?, variation = ?, code = ? WHERE id = ?"
+    )
+    .run(
+      payload.name,
+      payload.price,
+      payload.stock,
+      payload.image,
+      payload.category,
+      payload.variation,
+      payload.code,
+      Number(id)
+    );
+
+  if (result.changes === 0) {
+    return null;
+  }
+
+  return {
+    id: Number(id),
+    ...payload,
+  };
+}
+
+function deleteProduct(id) {
+  const result = db
+    .prepare("DELETE FROM products WHERE id = ?")
+    .run(Number(id));
+
+  return result.changes > 0;
+}
+
 module.exports = {
   listProducts,
   createProduct,
+  updateProduct,
+  deleteProduct,
 };

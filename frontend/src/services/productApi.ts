@@ -15,3 +15,13 @@ export async function createProduct(product: NuevoProducto): Promise<ProductoDB>
   ensureElectronApi()
   return window.api!.addProduct(product)
 }
+
+export async function updateProduct(id: number, product: NuevoProducto): Promise<ProductoDB | null> {
+  ensureElectronApi()
+  return window.api!.updateProduct(id, product)
+}
+
+export async function deleteProduct(id: number): Promise<boolean> {
+  ensureElectronApi()
+  return window.api!.deleteProduct(id)
+}

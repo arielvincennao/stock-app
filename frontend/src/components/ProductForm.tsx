@@ -4,10 +4,9 @@ type ProductFormProps = {
   form: NuevoProducto
   onChange: (next: NuevoProducto) => void
   onSubmit: () => void
-  onReload: () => void
 }
 
-export function ProductForm({ form, onChange, onSubmit, onReload }: ProductFormProps) {
+export function ProductForm({ form, onChange, onSubmit }: ProductFormProps) {
   return (
     <section className="new-product-form" aria-label="Crear nuevo producto">
       <h2>Crear producto</h2>
@@ -44,13 +43,15 @@ export function ProductForm({ form, onChange, onSubmit, onReload }: ProductFormP
           value={form.code}
           onChange={(event) => onChange({ ...form, code: event.target.value })}
         />
+        <input
+          placeholder="Variacion (ej: +1.2%)"
+          value={form.variation}
+          onChange={(event) => onChange({ ...form, variation: event.target.value })}
+        />
       </div>
       <div className="header-actions">
         <button className="primary-btn" type="button" onClick={onSubmit}>
           Guardar producto
-        </button>
-        <button className="secondary-btn" type="button" onClick={onReload}>
-          Recargar lista
         </button>
       </div>
     </section>

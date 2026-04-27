@@ -141,6 +141,15 @@
   color: #dbeafe;
 }
 
+.menu-section-title {
+  margin: 10px 0 2px;
+  color: #9ca3af;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .dashboard-shell {
   flex: 1;
   background: #1f2937;
@@ -245,6 +254,29 @@
 .market-list {
   display: grid;
   gap: 12px;
+}
+
+.list-controls {
+  display: flex;
+  gap: 10px;
+  margin: 0 0 12px;
+}
+
+.search-input,
+.sort-select {
+  border: 1px solid #4b5563;
+  border-radius: 8px;
+  background: #111827;
+  color: #f9fafb;
+  padding: 10px 12px;
+}
+
+.search-input {
+  flex: 1;
+}
+
+.sort-select {
+  min-width: 230px;
 }
 
 .pagination {
@@ -414,6 +446,157 @@
   color: #9ca3af;
 }
 
+.sell-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 14px;
+  align-items: start;
+}
+
+.sell-card-main {
+  grid-column: 1;
+}
+
+.sell-summary {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+}
+
+.sell-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.sell-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sell-field span {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.sell-field input,
+.sell-field select,
+.sell-add-row input {
+  border: 1px solid #4b5563;
+  border-radius: 8px;
+  background: #1f2937;
+  color: #f9fafb;
+  padding: 10px 12px;
+}
+
+.sell-add-row {
+  display: grid;
+  grid-template-columns: 1fr 140px auto;
+  gap: 10px;
+}
+
+.sell-table {
+  display: grid;
+  gap: 8px;
+}
+
+.sell-table-head,
+.sell-table-row {
+  display: grid;
+  grid-template-columns: 1.6fr 0.6fr 0.9fr 0.9fr;
+  gap: 10px;
+  align-items: center;
+}
+
+.sell-table-head {
+  color: #93c5fd;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.sell-table-row {
+  border: 1px solid #374151;
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: #e5e7eb;
+  background: #0f172a;
+}
+
+.sell-summary-lines {
+  display: grid;
+  gap: 8px;
+}
+
+.sell-summary-lines p {
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sell-total {
+  margin-top: 8px !important;
+  padding-top: 10px;
+  border-top: 1px solid #374151;
+}
+
+.sell-summary-actions {
+  margin-top: 14px;
+  display: grid;
+  gap: 8px;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: rgba(15, 23, 42, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.edit-modal {
+  width: min(760px, 100%);
+  background: #111827;
+  border: 1px solid #374151;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+.edit-modal h2 {
+  margin: 0 0 12px;
+  color: #f9fafb;
+}
+
+.confirm-modal {
+  width: min(460px, 100%);
+  background: #111827;
+  border: 1px solid #374151;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+.confirm-modal h2 {
+  margin: 0;
+  color: #f9fafb;
+  font-size: 1.1rem;
+}
+
+.confirm-modal p {
+  margin: 10px 0 14px;
+  color: #9ca3af;
+}
+
+.confirm-delete {
+  border-color: #7f1d1d;
+}
+
 @media (max-width: 760px) {
   .dashboard-logout {
     top: 16px;
@@ -447,6 +630,37 @@
   .market-item {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .list-controls {
+    flex-direction: column;
+  }
+
+  .sort-select {
+    min-width: 0;
+  }
+
+  .sell-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sell-card-main,
+  .sell-summary {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .sell-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sell-add-row {
+    grid-template-columns: 1fr;
+  }
+
+  .sell-table-head,
+  .sell-table-row {
+    grid-template-columns: 1fr 1fr;
   }
 
   .market-side {

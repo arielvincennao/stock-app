@@ -4,9 +4,11 @@ import { formatPrice, getDisplayImage, getDisplayVariation } from '../utils/prod
 type ProductListProps = {
   products: ProductoDB[]
   loading: boolean
+  onEdit: (product: ProductoDB) => void
+  onDelete: (product: ProductoDB) => void
 }
 
-export function ProductList({ products, loading }: ProductListProps) {
+export function ProductList({ products, loading, onEdit, onDelete }: ProductListProps) {
   return (
     <section className="market-list" aria-label="Listado de productos">
       {!loading && products.length === 0 && <p className="status-text">No hay productos cargados.</p>}
@@ -29,6 +31,14 @@ export function ProductList({ products, loading }: ProductListProps) {
               <div className="market-meta">
                 <strong>{formatPrice(producto.price)}</strong>
                 <span className={isPositive ? 'change up' : 'change down'}>{variation}</span>
+              </div>
+              <div className="market-actions">
+                <button className="item-btn edit-btn" type="button" onClick={() => onEdit(producto)}>
+                  Editar
+                </button>
+                <button className="item-btn delete-btn" type="button" onClick={() => onDelete(producto)}>
+                  Eliminar
+                </button>
               </div>
             </div>
           </article>
