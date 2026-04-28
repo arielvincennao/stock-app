@@ -4,9 +4,10 @@ type ProductFormProps = {
   form: NuevoProducto
   onChange: (next: NuevoProducto) => void
   onSubmit: () => void
+  onPickImage: () => void
 }
 
-export function ProductForm({ form, onChange, onSubmit }: ProductFormProps) {
+export function ProductForm({ form, onChange, onSubmit, onPickImage }: ProductFormProps) {
   return (
     <section className="new-product-form" aria-label="Crear nuevo producto">
       <h2>Crear producto</h2>
@@ -34,10 +35,13 @@ export function ProductForm({ form, onChange, onSubmit }: ProductFormProps) {
           onChange={(event) => onChange({ ...form, stock: Number(event.target.value) })}
         />
         <input
-          placeholder="Imagen URL"
+          placeholder="Ruta local de imagen"
           value={form.image}
-          onChange={(event) => onChange({ ...form, image: event.target.value })}
+          readOnly
         />
+        <button className="secondary-btn" type="button" onClick={onPickImage}>
+          Seleccionar imagen
+        </button>
         <input
           placeholder="Codigo"
           value={form.code}

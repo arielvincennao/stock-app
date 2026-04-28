@@ -2,7 +2,7 @@ import type { NuevoProducto } from '../types/product'
 
 const TEXT_PATTERN = /^[a-zA-ZÀ-ÿ0-9 .,_+\-/%()#]*$/
 const VARIATION_PATTERN = /^[+-]\d+(\.\d+)?%$/
-const URL_PATTERN = /^https?:\/\/[^\s]+$/i
+const REMOTE_URL_PATTERN = /^https?:\/\/[^\s]+$/i
 
 function hasValidText(value: string) {
   return TEXT_PATTERN.test(value)
@@ -25,8 +25,8 @@ export function validateProductForm(form: NuevoProducto): string | null {
     return 'El stock debe ser un numero entero mayor o igual a 0.'
   }
 
-  if (form.image.trim() && !URL_PATTERN.test(form.image.trim())) {
-    return 'La imagen debe ser una URL valida (http o https).'
+  if (REMOTE_URL_PATTERN.test(form.image.trim())) {
+    return 'La imagen debe guardarse localmente. Usa "Seleccionar imagen".'
   }
 
   if (!VARIATION_PATTERN.test(form.variation.trim())) {

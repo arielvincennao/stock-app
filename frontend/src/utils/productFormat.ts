@@ -8,7 +8,18 @@ export function getDisplayVariation(product: ProductoDB) {
 }
 
 export function getDisplayImage(product: ProductoDB) {
-  return product.image || DEFAULT_IMAGE
+  if (!product.image) return DEFAULT_IMAGE
+
+  if (/^https?:\/\//i.test(product.image)) {
+    return DEFAULT_IMAGE
+  }
+
+  if (/^file:\/\//i.test(product.image)) {
+    return product.image
+  }
+
+  const normalizedPath = product.image.replace(/\\/g, '/')
+  return encodeURI(`file:///${normalizedPath}`)
 }
 
 export function normalizeProductForm(form: NuevoProducto): NuevoProducto {

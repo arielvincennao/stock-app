@@ -24,6 +24,7 @@ type ElectronApi = {
   addProduct: (product: NuevoProductoPayload) => Promise<ProductoDB>
   updateProduct: (id: number, product: NuevoProductoPayload) => Promise<ProductoDB | null>
   deleteProduct: (id: number) => Promise<boolean>
+  pickAndStoreImage: () => Promise<string | null>
 }
 
 declare global {

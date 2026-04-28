@@ -6,9 +6,10 @@ type ProductListProps = {
   loading: boolean
   onEdit: (product: ProductoDB) => void
   onDelete: (product: ProductoDB) => void
+  onDetails: (product: ProductoDB) => void
 }
 
-export function ProductList({ products, loading, onEdit, onDelete }: ProductListProps) {
+export function ProductList({ products, loading, onEdit, onDelete, onDetails }: ProductListProps) {
   return (
     <section className="market-list" aria-label="Listado de productos">
       {!loading && products.length === 0 && <p className="status-text">No hay productos cargados.</p>}
@@ -22,7 +23,19 @@ export function ProductList({ products, loading, onEdit, onDelete }: ProductList
             <div className="market-main">
               <img className="market-image" src={image} alt={producto.name} />
               <div>
-                <h2>{producto.name}</h2>
+                <h2
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => onDetails(producto)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault()
+                      onDetails(producto)
+                    }
+                  }}
+                >
+                  {producto.name}
+                </h2>
                 <p>{producto.category || 'Sin categoria'}</p>
                 <span className="stock-badge">Stock: {producto.stock}</span>
               </div>
@@ -33,6 +46,9 @@ export function ProductList({ products, loading, onEdit, onDelete }: ProductList
                 <span className={isPositive ? 'change up' : 'change down'}>{variation}</span>
               </div>
               <div className="market-actions">
+                <button className="item-btn" type="button" onClick={() => onDetails(producto)}>
+                  Detalles
+                </button>
                 <button className="item-btn edit-btn" type="button" onClick={() => onEdit(producto)}>
                   Editar
                 </button>

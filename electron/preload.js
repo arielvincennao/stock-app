@@ -10,4 +10,6 @@ contextBridge.exposeInMainWorld("api", {
     ipcRenderer.invoke("update-product", id, product),
   deleteProduct: (id) =>
     ipcRenderer.invoke("delete-product", id),
+  pickAndStoreImage: () =>
+    ipcRenderer.invoke("pick-and-store-image"),
 });

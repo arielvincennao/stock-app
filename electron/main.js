@@ -10,6 +10,8 @@ function createWindow() {
     height: 700,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
+      // Permite mostrar imagenes file:// desde el renderer (http://localhost:5173).
+      webSecurity: false,
     },
   });
 

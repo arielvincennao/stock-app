@@ -19,9 +19,9 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [productos, setProductos] = useState<ProductoDB[]>([])
   const [currentPage, setCurrentPage] = useState(1)
-  const [dashboardView, setDashboardView] = useState<'listado' | 'crear' | 'vender' | 'movimientos' | 'configuracion'>(
-    'listado'
-  )
+  const [dashboardView, setDashboardView] = useState<
+    'listado' | 'crear' | 'detalle' | 'vender' | 'movimientos' | 'configuracion'
+  >('listado')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [form, setForm] = useState<NuevoProducto>(initialProductForm)
@@ -32,6 +32,7 @@ function App() {
   const [sortBy, setSortBy] = useState<
     'name-asc' | 'name-desc' | 'price-asc' | 'price-desc' | 'stock-asc' | 'stock-desc'
   >('name-asc')
+  const [selectedProduct, setSelectedProduct] = useState<ProductoDB | null>(null)
 
   const loadProducts = async () => {
     try {
@@ -68,6 +69,7 @@ function App() {
       await createProduct(sanitizedForm)
       setForm(initialProductForm)
       await loadProducts()
+      setDashboardView('listado')
     } catch (addError) {
       if (addError instanceof Error) {
         setError(addError.message)
@@ -75,6 +77,46 @@ function App() {
         setError('No se pudo crear el producto en database.db.')
       }
       console.error(addError)
+    }
+  }
+
+  const seleccionarImagenNuevoProducto = async () => {
+    if (!window.api) {
+      setError('No se detecto Electron API. Ejecuta la app con Electron.')
+      return
+    }
+
+    try {
+      const localPath = await window.api.pickAndStoreImage()
+      if (!localPath) return
+      setForm((prev) => ({ ...prev, image: localPath }))
+      setError('')
+    } catch (pickError) {
+      if (pickError instanceof Error) {
+        setError(pickError.message)
+      } else {
+        setError('No se pudo guardar la imagen localmente.')
+      }
+    }
+  }
+
+  const seleccionarImagenEdicion = async () => {
+    if (!window.api) {
+      setError('No se detecto Electron API. Ejecuta la app con Electron.')
+      return
+    }
+
+    try {
+      const localPath = await window.api.pickAndStoreImage()
+      if (!localPath) return
+      setEditForm((prev) => ({ ...prev, image: localPath }))
+      setError('')
+    } catch (pickError) {
+      if (pickError instanceof Error) {
+        setError(pickError.message)
+      } else {
+        setError('No se pudo guardar la imagen localmente.')
+      }
     }
   }
 
@@ -159,6 +201,12 @@ function App() {
 
   const eliminarProducto = (producto: ProductoDB) => {
     setConfirmState({ type: 'delete', product: producto })
+  }
+
+  const verDetallesProducto = (producto: ProductoDB) => {
+    setSelectedProduct(producto)
+    setError('')
+    setDashboardView('detalle')
   }
 
   const cancelarEdicion = () => {
@@ -273,6 +321,16 @@ function App() {
             >
               Productos
             </button>
+            <button
+              type="button"
+              className={dashboardView === 'crear' ? 'menu-btn active' : 'menu-btn'}
+              onClick={() => {
+                setDashboardView('crear')
+                setError('')
+              }}
+            >
+              Crear producto
+            </button>
 
             <p className="menu-section-title">CONTROL</p>
             <button
@@ -300,6 +358,16 @@ function App() {
                     <h1>Listado de productos</h1>
                     <p>Productos guardados en SQLite (database.db) desde Electron.</p>
                   </div>
+                  <button
+                    className="primary-btn"
+                    type="button"
+                    onClick={() => {
+                      setDashboardView('crear')
+                      setError('')
+                    }}
+                  >
+                    Nuevo producto
+                  </button>
                 </header>
 
                 {loading && <p className="status-text">Cargando productos...</p>}
@@ -336,6 +404,7 @@ function App() {
                   loading={loading}
                   onEdit={editarProducto}
                   onDelete={eliminarProducto}
+                  onDetails={verDetallesProducto}
                 />
                 <Pagination totalPages={totalPages} currentPage={currentPage} onChangePage={setCurrentPage} />
               </>
@@ -344,7 +413,9 @@ function App() {
                 <header className="dashboard-header">
                   <div>
                     <h1>Crear producto</h1>
-                    <p>Crea y guarda nuevos productos en SQLite (database.db).</p>
+                    <p>
+                      Crea y guarda nuevos productos en SQLite (database.db).
+                    </p>
                   </div>
                 </header>
 
@@ -354,8 +425,20 @@ function App() {
                   form={form}
                   onChange={setForm}
                   onSubmit={() => void agregarProducto()}
+                  onPickImage={() => void seleccionarImagenNuevoProducto()}
                 />
               </>
+            ) : dashboardView === 'detalle' ? (
+              <section className="sell-panel" aria-label="Detalle de producto">
+                <header className="dashboard-header">
+                  <div>
+                    <h1>Viendo detalles de {selectedProduct?.name ?? 'producto'}</h1>
+                  </div>
+                  <button className="secondary-btn" type="button" onClick={() => setDashboardView('listado')}>
+                    Volver
+                  </button>
+                </header>
+              </section>
             ) : dashboardView === 'vender' ? (
               <section className="sell-panel" aria-label="Panel de venta">
                 <header className="dashboard-header">
@@ -523,10 +606,13 @@ function App() {
                   onChange={(event) => setEditForm({ ...editForm, stock: Number(event.target.value) })}
                 />
                 <input
-                  placeholder="Imagen URL"
+                  placeholder="Ruta local de imagen"
                   value={editForm.image}
-                  onChange={(event) => setEditForm({ ...editForm, image: event.target.value })}
+                  readOnly
                 />
+                <button className="secondary-btn" type="button" onClick={() => void seleccionarImagenEdicion()}>
+                  Seleccionar imagen
+                </button>
                 <input
                   placeholder="Variacion (ej: +1.2%)"
                   value={editForm.variation}
