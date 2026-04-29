@@ -19,11 +19,34 @@ type NuevoProductoPayload = {
   code?: string
 }
 
+type MovimientoVenta = {
+  id: number
+  createdAt: string
+  paymentMethod: string
+  itemsCount: number
+  subtotal: number
+  discountPercent: number
+  discountAmount: number
+  total: number
+}
+
+type NuevoMovimientoPayload = {
+  createdAt: string
+  paymentMethod: string
+  itemsCount: number
+  subtotal: number
+  discountPercent: number
+  discountAmount: number
+  total: number
+}
+
 type ElectronApi = {
   getProducts: () => Promise<ProductoDB[]>
   addProduct: (product: NuevoProductoPayload) => Promise<ProductoDB>
   updateProduct: (id: number, product: NuevoProductoPayload) => Promise<ProductoDB | null>
   deleteProduct: (id: number) => Promise<boolean>
+  getMovements: () => Promise<MovimientoVenta[]>
+  addMovement: (movement: NuevoMovimientoPayload) => Promise<MovimientoVenta>
   pickAndStoreImage: () => Promise<string | null>
 }
 

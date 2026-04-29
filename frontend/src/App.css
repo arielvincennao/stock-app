@@ -496,6 +496,28 @@
   gap: 10px;
 }
 
+.sale-suggestions {
+  margin-top: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.sale-suggestion-item {
+  border: 1px solid #374151;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #e5e7eb;
+  text-align: left;
+  padding: 10px 12px;
+  cursor: pointer;
+  display: grid;
+  gap: 4px;
+}
+
+.sale-suggestion-item small {
+  color: #9ca3af;
+}
+
 .sell-table {
   display: grid;
   gap: 8px;
@@ -504,7 +526,7 @@
 .sell-table-head,
 .sell-table-row {
   display: grid;
-  grid-template-columns: 1.6fr 0.6fr 0.9fr 0.9fr;
+  grid-template-columns: 1.6fr 0.6fr 0.9fr 0.9fr 0.8fr;
   gap: 10px;
   align-items: center;
 }
@@ -522,6 +544,15 @@
   padding: 10px 12px;
   color: #e5e7eb;
   background: #0f172a;
+}
+
+.sell-table-row .item-btn {
+  justify-self: start;
+}
+
+.sell-movements-head,
+.sell-movements-row {
+  grid-template-columns: 1.6fr 1fr 0.6fr 0.8fr 1fr;
 }
 
 .sell-summary-lines {

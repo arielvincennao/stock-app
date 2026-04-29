@@ -24,6 +24,21 @@ function ensureProductsTable() {
   `).run();
 }
 
+function ensureMovementsTable() {
+  db.prepare(`
+    CREATE TABLE IF NOT EXISTS movements (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      createdAt TEXT NOT NULL,
+      paymentMethod TEXT NOT NULL,
+      itemsCount INTEGER NOT NULL,
+      subtotal REAL NOT NULL,
+      discountPercent REAL NOT NULL,
+      discountAmount REAL NOT NULL,
+      total REAL NOT NULL
+    )
+  `).run();
+}
+
 function seedProductsIfEmpty() {
   //Si la tabla esta vacia, se insertan los productos de ejemplo
   const { total } = db.prepare("SELECT COUNT(*) AS total FROM products").get();
@@ -63,6 +78,7 @@ function normalizeProductImages() {
 }
 
 ensureProductsTable();
+ensureMovementsTable();
 seedProductsIfEmpty();
 normalizeProductImages();
 
