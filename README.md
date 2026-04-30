@@ -1,6 +1,6 @@
 # Stock App
 
-Aplicación web para la gestión simple de stock, productos y precios en negocios.
+Aplicación web para la gestión simple de stock, productos y ventas en negocios.
 
 El objetivo del proyecto es facilitar el control de inventario de forma rápida e intuitiva.
 
@@ -10,6 +10,3 @@ El objetivo del proyecto es facilitar el control de inventario de forma rápida 
 
 ## Estado del proyecto
 En desarrollo
-
-## Funcionalidades actuales
-- Login básico (UI)
