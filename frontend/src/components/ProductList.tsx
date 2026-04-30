@@ -17,6 +17,8 @@ export function ProductList({ products, loading, onEdit, onDelete, onDetails }: 
         const variation = getDisplayVariation(producto)
         const image = getDisplayImage(producto)
         const isPositive = variation.startsWith('+')
+        const stockBadgeClass =
+          producto.stock <= 0 ? 'stock-badge danger' : producto.stock <= 5 ? 'stock-badge warning' : 'stock-badge success'
 
         return (
           <article className="market-item" key={producto.id}>
@@ -37,7 +39,7 @@ export function ProductList({ products, loading, onEdit, onDelete, onDetails }: 
                   {producto.name}
                 </h2>
                 <p>{producto.category || 'Sin categoria'}</p>
-                <span className="stock-badge">Stock: {producto.stock}</span>
+                <span className={stockBadgeClass}>Stock: {producto.stock}</span>
               </div>
             </div>
             <div className="market-side">

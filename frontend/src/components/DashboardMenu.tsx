@@ -9,7 +9,7 @@ type DashboardMenuProps = {
 export function DashboardMenu({ currentView, onNavigate, onCreateProduct }: DashboardMenuProps) {
   return (
     <aside className="dashboard-menu">
-      <p className="login-kicker">Stock App</p>
+      <p className="login-kicker">Stock App - Prueba gratuita</p>
       <p className="menu-section-title">OPERACION</p>
       <button type="button" className={currentView === 'vender' ? 'menu-btn active' : 'menu-btn'} onClick={() => onNavigate('vender')}>
         Vender

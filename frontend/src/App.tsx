@@ -72,7 +72,7 @@ function App() {
               />
             ) : dashboardView === 'detalle' ? (
               <ProductDetailView
-                productName={products.selectedProduct?.name ?? 'producto'}
+                product={products.selectedProduct}
                 onBack={() => setDashboardView('listado')}
               />
             ) : dashboardView === 'vender' ? (

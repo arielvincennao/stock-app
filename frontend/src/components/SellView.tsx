@@ -166,10 +166,6 @@ export function SellView({
                 <span>Descuento</span>
                 <strong>-{formatCurrency(discountAmount)}</strong>
               </p>
-              <p>
-                <span>Impuestos</span>
-                <strong>$0</strong>
-              </p>
               <p className="sell-total">
                 <span>Total</span>
                 <strong>{formatCurrency(total)}</strong>
