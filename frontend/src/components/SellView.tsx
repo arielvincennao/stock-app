@@ -3,6 +3,7 @@ import type { ProductoDB } from '../types/product'
 export type SaleCartItem = {
   productId: number
   name: string
+  image: string | null
   unitPrice: number
   quantity: number
 }
@@ -14,6 +15,7 @@ type SellViewProps = {
   productQuantity: string
   suggestions: ProductoDB[]
   cart: SaleCartItem[]
+  defaultProductImage: string | null
   subtotal: number
   discountAmount: number
   total: number
@@ -24,6 +26,7 @@ type SellViewProps = {
   onProductQuantityChange: (value: string) => void
   onAddProduct: () => void
   onSuggestionSelect: (suggestion: ProductoDB) => void
+  onAdjustCartItemQuantity: (productId: number, delta: number) => void
   onRemoveCartItem: (productId: number) => void
   onCharge: () => void
   onCancelSale: () => void
@@ -37,6 +40,7 @@ export function SellView({
   productQuantity,
   suggestions,
   cart,
+  defaultProductImage,
   subtotal,
   discountAmount,
   total,
@@ -47,6 +51,7 @@ export function SellView({
   onProductQuantityChange,
   onAddProduct,
   onSuggestionSelect,
+  onAdjustCartItemQuantity,
   onRemoveCartItem,
   onCharge,
   onCancelSale,
@@ -90,40 +95,43 @@ export function SellView({
 
         <article className="sell-card sell-card-main">
           <h2>Agregar producto</h2>
-          <div className="sell-add-row">
-            <input
-              type="text"
-              placeholder="Buscar producto por nombre o codigo"
-              value={productQuery}
-              onChange={(event) => onProductQueryChange(event.target.value)}
-            />
-            <input
-              type="number"
-              min="1"
-              value={productQuantity}
-              onChange={(event) => onProductQuantityChange(event.target.value)}
-            />
-            <button className="primary-btn" type="button" onClick={onAddProduct}>
-              Agregar
-            </button>
-          </div>
-          {suggestions.length > 0 && (
-            <div className="sale-suggestions" role="listbox" aria-label="Sugerencias de productos">
-              {suggestions.map((suggestion) => (
-                <button
-                  className="sale-suggestion-item"
-                  key={suggestion.id}
-                  type="button"
-                  onClick={() => onSuggestionSelect(suggestion)}
-                >
-                  <span>{suggestion.name}</span>
-                  <small>
-                    Cod: {suggestion.code || '-'} | Stock: {suggestion.stock}
-                  </small>
-                </button>
-              ))}
+          <div className="sale-search-group">
+            <div className="sell-add-row">
+              <input
+                type="text"
+                placeholder="Buscar producto por nombre o codigo"
+                value={productQuery}
+                onChange={(event) => onProductQueryChange(event.target.value)}
+              />
+              <input
+                type="number"
+                placeholder="Cantidad"
+                min="1"
+                value={productQuantity}
+                onChange={(event) => onProductQuantityChange(event.target.value)}
+              />
+              <button className="primary-btn" type="button" onClick={onAddProduct}>
+                Agregar
+              </button>
             </div>
-          )}
+            {suggestions.length > 0 && (
+              <div className="sale-suggestions" role="listbox" aria-label="Sugerencias de productos">
+                {suggestions.map((suggestion) => (
+                  <button
+                    className="sale-suggestion-item"
+                    key={suggestion.id}
+                    type="button"
+                    onClick={() => onSuggestionSelect(suggestion)}
+                  >
+                    <span>{suggestion.name}</span>
+                    <small>
+                      Cod: {suggestion.code || '-'} | Stock: {suggestion.stock}
+                    </small>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </article>
 
         <article className="sell-card sell-card-main">
@@ -141,8 +149,35 @@ export function SellView({
             ) : (
               cart.map((item) => (
                 <div className="sell-table-row" key={item.productId}>
-                  <span>{item.name}</span>
-                  <span>{item.quantity}</span>
+                  <div className="sell-product-cell">
+                    {item.image || defaultProductImage ? (
+                      <img className="sell-product-thumb" src={item.image || defaultProductImage || ''} alt={item.name} />
+                    ) : (
+                      <div className="sell-product-thumb-placeholder" aria-hidden="true">
+                        Sin img
+                      </div>
+                    )}
+                    <span>{item.name}</span>
+                  </div>
+                  <div className="sell-quantity-control">
+                    <button
+                      className="item-btn quantity-btn"
+                      type="button"
+                      onClick={() => onAdjustCartItemQuantity(item.productId, -1)}
+                      aria-label={`Disminuir cantidad de ${item.name}`}
+                    >
+                      -
+                    </button>
+                    <span>{item.quantity}</span>
+                    <button
+                      className="item-btn quantity-btn"
+                      type="button"
+                      onClick={() => onAdjustCartItemQuantity(item.productId, 1)}
+                      aria-label={`Aumentar cantidad de ${item.name}`}
+                    >
+                      +
+                    </button>
+                  </div>
                   <span>{formatCurrency(item.unitPrice)}</span>
                   <span>{formatCurrency(item.unitPrice * item.quantity)}</span>
                   <button className="item-btn delete-btn" type="button" onClick={() => onRemoveCartItem(item.productId)}>

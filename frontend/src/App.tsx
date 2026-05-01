@@ -28,9 +28,15 @@ function App() {
   if (isLoggedIn) {
     return (
       <main className="dashboard-page">
-        <button className="secondary-btn dashboard-logout" type="button" onClick={() => setIsLoggedIn(false)}>
-          Cerrar sesion
-        </button>
+        <nav className="dashboard-navbar">
+          <div className="dashboard-brand">
+            <span className="dashboard-brand-kicker">Stock</span>
+            <strong>Panel de control</strong>
+          </div>
+          <button className="secondary-btn dashboard-logout" type="button" onClick={() => setIsLoggedIn(false)}>
+            Cerrar sesion
+          </button>
+        </nav>
         <section className="dashboard-layout">
           <DashboardMenu
             currentView={dashboardView}
@@ -74,6 +80,7 @@ function App() {
                 productQuantity={sales.saleProductQuantity}
                 suggestions={sales.saleSuggestions}
                 cart={sales.saleCart}
+                defaultProductImage={sales.defaultProductImage}
                 subtotal={sales.saleSubtotal}
                 discountAmount={sales.saleDiscountAmount}
                 total={sales.saleTotal}
@@ -84,9 +91,10 @@ function App() {
                 onProductQuantityChange={sales.setSaleProductQuantity}
                 onAddProduct={sales.agregarProductoAlCarrito}
                 onSuggestionSelect={(suggestion) => {
-                  sales.setSaleProductQuery(suggestion.code?.trim() ? suggestion.code : suggestion.name)
+                  sales.setSaleProductQuery(suggestion.name)
                   setError('')
                 }}
+                onAdjustCartItemQuantity={sales.ajustarCantidadItem}
                 onRemoveCartItem={sales.eliminarItemDelCarrito}
                 onCharge={() => void sales.cobrarVenta()}
                 onCancelSale={sales.cancelarVenta}

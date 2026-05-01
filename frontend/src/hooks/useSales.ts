@@ -59,6 +59,12 @@ export function useSales({ productos, loadProducts, onError }: UseSalesParams) {
     const query = saleProductQuery.trim().toLowerCase()
     if (!query) return []
 
+    const hasExactMatch = productos.some((producto) => {
+      const code = (producto.code ?? '').toLowerCase()
+      return producto.name.toLowerCase() === query || code === query
+    })
+    if (hasExactMatch) return []
+
     return productos
       .filter((producto) => {
         const code = (producto.code ?? '').toLowerCase()
@@ -66,6 +72,10 @@ export function useSales({ productos, loadProducts, onError }: UseSalesParams) {
       })
       .slice(0, 6)
   }, [productos, saleProductQuery])
+  const defaultProductImage = useMemo(
+    () => productos.find((producto) => typeof producto.image === 'string' && /default-product\.jpg$/i.test(producto.image))?.image ?? null,
+    [productos]
+  )
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 2 }).format(value)
 
@@ -121,6 +131,7 @@ export function useSales({ productos, loadProducts, onError }: UseSalesParams) {
         {
           productId: matchedProduct.id,
           name: matchedProduct.name,
+          image: matchedProduct.image || defaultProductImage,
           unitPrice: matchedProduct.price,
           quantity,
         },
@@ -136,6 +147,39 @@ export function useSales({ productos, loadProducts, onError }: UseSalesParams) {
   const eliminarItemDelCarrito = (productId: number) => {
     setSaleCart((prev) => prev.filter((item) => item.productId !== productId))
     setSaleMessage('')
+  }
+
+  const ajustarCantidadItem = (productId: number, delta: number) => {
+    if (delta === 0) return
+
+    const sourceProduct = productos.find((producto) => producto.id === productId)
+    if (!sourceProduct) {
+      onError('No se encontro el producto para actualizar la cantidad.')
+      return
+    }
+
+    const cartItem = saleCart.find((item) => item.productId === productId)
+    if (!cartItem) return
+
+    const nextQuantity = cartItem.quantity + delta
+
+    if (nextQuantity <= 0) {
+      setSaleCart((prev) => prev.filter((item) => item.productId !== productId))
+      setSaleMessage('')
+      onError('')
+      return
+    }
+
+    if (nextQuantity > sourceProduct.stock) {
+      onError(`Stock insuficiente para "${sourceProduct.name}". Disponible: ${sourceProduct.stock}.`)
+      return
+    }
+
+    setSaleCart((prev) =>
+      prev.map((item) => (item.productId === productId ? { ...item, quantity: nextQuantity } : item))
+    )
+    setSaleMessage('')
+    onError('')
   }
 
   const cancelarVenta = () => {
@@ -226,8 +270,10 @@ export function useSales({ productos, loadProducts, onError }: UseSalesParams) {
     saleDiscountAmount,
     saleTotal,
     saleSuggestions,
+    defaultProductImage,
     formatCurrency,
     agregarProductoAlCarrito,
+    ajustarCantidadItem,
     eliminarItemDelCarrito,
     cancelarVenta,
     cobrarVenta,
