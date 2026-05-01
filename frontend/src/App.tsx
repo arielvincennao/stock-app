@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import './App.css'
+import { AlertsView, mockAlerts } from './components/AlertsView'
 import { ConfirmModal } from './components/ConfirmModal'
-import { CreateProductView } from './components/CreateProductView'
+import { CreateProductModal } from './components/CreateProductModal'
 import { DashboardMenu, type DashboardView } from './components/DashboardMenu'
 import { EditProductModal } from './components/EditProductModal'
 import { LoginView } from './components/LoginView'
@@ -18,6 +19,7 @@ function App() {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [dashboardView, setDashboardView] = useState<DashboardView>('listado')
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [error, setError] = useState('')
 
   const products = useProducts({ productsPerPage: PRODUCTS_PER_PAGE, onError: setError })
@@ -33,10 +35,7 @@ function App() {
           <DashboardMenu
             currentView={dashboardView}
             onNavigate={setDashboardView}
-            onCreateProduct={() => {
-              setDashboardView('crear')
-              setError('')
-            }}
+            alertsCount={mockAlerts.length}
           />
           <section className="dashboard-shell">
             {dashboardView === 'listado' ? (
@@ -51,7 +50,7 @@ function App() {
                 onSearchTermChange={products.setSearchTerm}
                 onSortByChange={products.setSortBy}
                 onCreateProduct={() => {
-                  setDashboardView('crear')
+                  setIsCreateModalOpen(true)
                   setError('')
                 }}
                 onEdit={products.editarProducto}
@@ -61,14 +60,6 @@ function App() {
                   setDashboardView('detalle')
                 }}
                 onChangePage={products.setCurrentPage}
-              />
-            ) : dashboardView === 'crear' ? (
-              <CreateProductView
-                error={error}
-                form={products.form}
-                onChange={products.setForm}
-                onSubmit={() => void products.agregarProducto(() => setDashboardView('listado'))}
-                onPickImage={() => void products.seleccionarImagenNuevoProducto()}
               />
             ) : dashboardView === 'detalle' ? (
               <ProductDetailView
@@ -103,6 +94,8 @@ function App() {
               />
             ) : dashboardView === 'movimientos' ? (
               <MovementsView movements={sales.movements} formatCurrency={sales.formatCurrency} />
+            ) : dashboardView === 'alertas' ? (
+              <AlertsView />
             ) : (
               <SettingsView />
             )}
@@ -116,6 +109,25 @@ function App() {
             onPickImage={() => void products.seleccionarImagenEdicion()}
             onSave={products.guardarEdicionProducto}
             onCancel={products.cancelarEdicion}
+          />
+        )}
+
+        {isCreateModalOpen && (
+          <CreateProductModal
+            error={error}
+            form={products.form}
+            onChange={products.setForm}
+            onPickImage={() => void products.seleccionarImagenNuevoProducto()}
+            onSave={() =>
+              void products.agregarProducto(() => {
+                setIsCreateModalOpen(false)
+                setError('')
+              })
+            }
+            onCancel={() => {
+              setIsCreateModalOpen(false)
+              setError('')
+            }}
           />
         )}
 

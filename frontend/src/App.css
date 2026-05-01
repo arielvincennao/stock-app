@@ -91,11 +91,13 @@
 
 .dashboard-page {
   position: relative;
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 80px;
+  box-sizing: border-box;
+  overflow: hidden;
   background: #111827;
 }
 
@@ -106,13 +108,15 @@
 }
 
 .dashboard-layout {
-  width: min(1320px, 100%);
+  width: 80%;
+  height: 100%;
   display: flex;
-  gap: 16px;
+  gap: 15px;
 }
 
 .dashboard-menu {
   width: 20vw;
+  height: 100%;
   min-width: 220px;
   background: #1f2937;
   border: 1px solid #374151;
@@ -122,6 +126,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  overflow-y: auto;
 }
 
 .menu-btn {
@@ -133,12 +138,27 @@
   text-align: left;
   font-weight: 600;
   cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .menu-btn.active {
   border-color: #2563eb;
   background: rgba(37, 99, 235, 0.2);
   color: #dbeafe;
+}
+
+.menu-alert-count {
+  min-width: 22px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgba(239, 68, 68, 0.25);
+  border: 1px solid rgba(248, 113, 113, 0.45);
+  color: #fecaca;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-align: center;
 }
 
 .menu-section-title {
@@ -152,6 +172,9 @@
 
 .dashboard-shell {
   flex: 1;
+  height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
   background: #1f2937;
   border: 1px solid #374151;
   border-radius: 16px;
@@ -590,6 +613,84 @@
   margin-top: 14px;
   display: grid;
   gap: 8px;
+}
+
+.alerts-panel h1 {
+  margin: 0;
+  color: #f9fafb;
+  font-size: 1.8rem;
+}
+
+.alerts-list {
+  display: grid;
+  gap: 12px;
+}
+
+.alert-card {
+  background: #111827;
+  border: 1px solid #374151;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: grid;
+  gap: 10px;
+}
+
+.alert-card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+
+.alert-card-head strong {
+  color: #f9fafb;
+  font-size: 1rem;
+}
+
+.alert-card-head span {
+  color: #9ca3af;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.alert-card p {
+  margin: 0;
+  color: #cbd5e1;
+}
+
+.alert-badge {
+  width: fit-content;
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.alert-alta {
+  border-color: #7f1d1d;
+}
+
+.alert-media {
+  border-color: #78350f;
+}
+
+.alert-baja {
+  border-color: #0f766e;
+}
+
+.alert-badge-alta {
+  color: #fecaca;
+  background: rgba(127, 29, 29, 0.35);
+}
+
+.alert-badge-media {
+  color: #fde68a;
+  background: rgba(120, 53, 15, 0.35);
+}
+
+.alert-badge-baja {
+  color: #99f6e4;
+  background: rgba(15, 118, 110, 0.35);
 }
 
 .product-detail-panel {

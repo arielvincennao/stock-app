@@ -1,12 +1,12 @@
-export type DashboardView = 'listado' | 'crear' | 'detalle' | 'vender' | 'movimientos' | 'configuracion'
+export type DashboardView = 'listado' | 'detalle' | 'vender' | 'movimientos' | 'alertas' | 'configuracion'
 
 type DashboardMenuProps = {
   currentView: DashboardView
   onNavigate: (view: DashboardView) => void
-  onCreateProduct: () => void
+  alertsCount: number
 }
 
-export function DashboardMenu({ currentView, onNavigate, onCreateProduct }: DashboardMenuProps) {
+export function DashboardMenu({ currentView, onNavigate, alertsCount }: DashboardMenuProps) {
   return (
     <aside className="dashboard-menu">
       <p className="login-kicker">Stock App - Prueba gratuita</p>
@@ -16,18 +16,18 @@ export function DashboardMenu({ currentView, onNavigate, onCreateProduct }: Dash
       </button>
       <button
         type="button"
-        className={currentView === 'listado' || currentView === 'crear' ? 'menu-btn active' : 'menu-btn'}
+        className={currentView === 'listado' ? 'menu-btn active' : 'menu-btn'}
         onClick={() => onNavigate('listado')}
       >
         Productos
       </button>
-      <button type="button" className={currentView === 'crear' ? 'menu-btn active' : 'menu-btn'} onClick={onCreateProduct}>
-        Crear producto
-      </button>
-
       <p className="menu-section-title">CONTROL</p>
       <button type="button" className={currentView === 'movimientos' ? 'menu-btn active' : 'menu-btn'} onClick={() => onNavigate('movimientos')}>
         Movimientos
+      </button>
+      <button type="button" className={currentView === 'alertas' ? 'menu-btn active' : 'menu-btn'} onClick={() => onNavigate('alertas')}>
+        <span>Alertas</span>
+        <span className="menu-alert-count">{alertsCount}</span>
       </button>
 
       <p className="menu-section-title">SISTEMA</p>

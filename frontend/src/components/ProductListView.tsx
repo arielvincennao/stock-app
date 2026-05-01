@@ -43,7 +43,7 @@ export function ProductListView({
         description="Productos guardados en SQLite (database.db) desde Electron."
         action={
           <button className="primary-btn" type="button" onClick={onCreateProduct}>
-            Nuevo producto
+            Crear nuevo producto
           </button>
         }
       />
