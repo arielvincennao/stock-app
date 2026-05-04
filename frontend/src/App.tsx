@@ -10,9 +10,11 @@ import { MovementsView } from './components/MovementsView'
 import { ProductDetailView } from './components/ProductDetailView'
 import { ProductListView } from './components/ProductListView'
 import { SellView } from './components/SellView'
+import { HelpView } from './components/HelpView'
 import { SettingsView } from './components/SettingsView'
 import { useProducts } from './hooks/useProducts'
 import { useSales } from './hooks/useSales'
+import { fetchMovementDetail } from './services/productApi'
 
 function App() {
   const PRODUCTS_PER_PAGE = 10
@@ -28,20 +30,12 @@ function App() {
   if (isLoggedIn) {
     return (
       <main className="dashboard-page">
-        <nav className="dashboard-navbar">
-          <div className="dashboard-brand">
-            <span className="dashboard-brand-kicker">Stock</span>
-            <strong>Panel de control</strong>
-          </div>
-          <button className="secondary-btn dashboard-logout" type="button" onClick={() => setIsLoggedIn(false)}>
-            Cerrar sesion
-          </button>
-        </nav>
         <section className="dashboard-layout">
           <DashboardMenu
             currentView={dashboardView}
             onNavigate={setDashboardView}
             alertsCount={mockAlerts.length}
+            onLogout={() => setIsLoggedIn(false)}
           />
           <section className="dashboard-shell">
             {dashboardView === 'listado' ? (
@@ -101,9 +95,16 @@ function App() {
                 formatCurrency={sales.formatCurrency}
               />
             ) : dashboardView === 'movimientos' ? (
-              <MovementsView movements={sales.movements} formatCurrency={sales.formatCurrency} />
+              <MovementsView
+                movements={sales.movements}
+                formatCurrency={sales.formatCurrency}
+                fetchMovementDetail={fetchMovementDetail}
+                onDeleteMovement={sales.eliminarMovimiento}
+              />
             ) : dashboardView === 'alertas' ? (
               <AlertsView />
+            ) : dashboardView === 'ayuda' ? (
+              <HelpView />
             ) : (
               <SettingsView />
             )}

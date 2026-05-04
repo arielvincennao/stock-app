@@ -30,6 +30,26 @@ type MovimientoVenta = {
   total: number
 }
 
+type ItemLineaMovimiento = {
+  id: number
+  movementId: number
+  productId: number
+  productName: string
+  unitPrice: number
+  quantity: number
+}
+
+type MovimientoDetalle = MovimientoVenta & {
+  items: ItemLineaMovimiento[]
+}
+
+type ItemLineaNuevoMovimiento = {
+  productId: number
+  productName: string
+  unitPrice: number
+  quantity: number
+}
+
 type NuevoMovimientoPayload = {
   createdAt: string
   paymentMethod: string
@@ -38,6 +58,7 @@ type NuevoMovimientoPayload = {
   discountPercent: number
   discountAmount: number
   total: number
+  items?: ItemLineaNuevoMovimiento[]
 }
 
 type ElectronApi = {
@@ -46,7 +67,9 @@ type ElectronApi = {
   updateProduct: (id: number, product: NuevoProductoPayload) => Promise<ProductoDB | null>
   deleteProduct: (id: number) => Promise<boolean>
   getMovements: () => Promise<MovimientoVenta[]>
+  getMovementDetail: (id: number) => Promise<MovimientoDetalle | null>
   addMovement: (movement: NuevoMovimientoPayload) => Promise<MovimientoVenta>
+  deleteMovement: (id: number) => Promise<boolean>
   pickAndStoreImage: () => Promise<string | null>
 }
 

@@ -1,6 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { SaleCartItem } from '../components/SellView'
-import { createMovement, fetchMovements, type MovementDB, updateProduct } from '../services/productApi'
+import {
+  createMovement,
+  deleteMovement,
+  fetchMovements,
+  type MovementDB,
+  updateProduct,
+} from '../services/productApi'
 import type { ProductoDB } from '../types/product'
 
 type UseSalesParams = {
@@ -29,6 +35,27 @@ export function useSales({ productos, loadProducts, onError }: UseSalesParams) {
         onError('No se pudieron cargar los movimientos.')
       }
       console.error(fetchError)
+    }
+  }
+
+  const eliminarMovimiento = async (id: number): Promise<boolean> => {
+    try {
+      onError('')
+      const removed = await deleteMovement(id)
+      if (!removed) {
+        onError('No se encontro el movimiento.')
+        return false
+      }
+      await loadMovements()
+      return true
+    } catch (deleteError) {
+      if (deleteError instanceof Error) {
+        onError(deleteError.message)
+      } else {
+        onError('No se pudo eliminar el movimiento.')
+      }
+      console.error(deleteError)
+      return false
     }
   }
 
@@ -234,6 +261,12 @@ export function useSales({ productos, loadProducts, onError }: UseSalesParams) {
         discountPercent: parsedDiscountPercent,
         discountAmount: saleDiscountAmount,
         total: saleTotal,
+        items: saleCart.map((item) => ({
+          productId: item.productId,
+          productName: item.name,
+          unitPrice: item.unitPrice,
+          quantity: item.quantity,
+        })),
       })
 
       setSaleCart([])
@@ -277,5 +310,6 @@ export function useSales({ productos, loadProducts, onError }: UseSalesParams) {
     eliminarItemDelCarrito,
     cancelarVenta,
     cobrarVenta,
+    eliminarMovimiento,
   }
 }

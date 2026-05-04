@@ -1,3 +1,5 @@
+import logoTenva from '../assets/icons/tenva.png'
+
 type LoginViewProps = {
   onLogin: () => void
 }
@@ -6,8 +8,10 @@ export function LoginView({ onLogin }: LoginViewProps) {
   return (
     <main className="login-page">
       <section className="login-card" aria-labelledby="login-title">
+        <div className="login-brand">
+          <img className="login-logo" src={logoTenva} alt="Tenva" />
+        </div>
         <div className="login-header">
-          <p className="login-kicker">Stock App</p>
           <h1 id="login-title">Acceso al sistema</h1>
         </div>
         <form

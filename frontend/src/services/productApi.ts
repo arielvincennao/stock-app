@@ -1,5 +1,12 @@
 import type { NuevoProducto, ProductoDB } from '../types/product'
 
+export type MovementLineItemPayload = {
+  productId: number
+  productName: string
+  unitPrice: number
+  quantity: number
+}
+
 export type MovementPayload = {
   createdAt: string
   paymentMethod: string
@@ -8,10 +15,20 @@ export type MovementPayload = {
   discountPercent: number
   discountAmount: number
   total: number
+  items?: MovementLineItemPayload[]
 }
 
-export type MovementDB = MovementPayload & {
+export type MovementDB = Omit<MovementPayload, 'items'> & {
   id: number
+}
+
+export type MovementLineItemDB = MovementLineItemPayload & {
+  id: number
+  movementId: number
+}
+
+export type MovementDetailDB = MovementDB & {
+  items: MovementLineItemDB[]
 }
 
 function ensureElectronApi() {
@@ -45,7 +62,17 @@ export async function fetchMovements(): Promise<MovementDB[]> {
   return window.api!.getMovements()
 }
 
+export async function fetchMovementDetail(id: number): Promise<MovementDetailDB | null> {
+  ensureElectronApi()
+  return window.api!.getMovementDetail(id)
+}
+
 export async function createMovement(movement: MovementPayload): Promise<MovementDB> {
   ensureElectronApi()
   return window.api!.addMovement(movement)
+}
+
+export async function deleteMovement(id: number): Promise<boolean> {
+  ensureElectronApi()
+  return window.api!.deleteMovement(id)
 }

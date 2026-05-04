@@ -7,6 +7,7 @@ const { sampleProducts } = require("../data/sampleProducts");
 
 const dbPath = path.join(__dirname, "..", "database.db");
 const db = new Database(dbPath);
+db.pragma("foreign_keys = ON");
 const DEFAULT_PRODUCT_IMAGE = path.join(__dirname, "..", "data", "product-images", "default-product.jpg");
 
 function ensureProductsTable() {
@@ -35,6 +36,20 @@ function ensureMovementsTable() {
       discountPercent REAL NOT NULL,
       discountAmount REAL NOT NULL,
       total REAL NOT NULL
+    )
+  `).run();
+}
+
+function ensureMovementItemsTable() {
+  db.prepare(`
+    CREATE TABLE IF NOT EXISTS movement_items (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      movementId INTEGER NOT NULL,
+      productId INTEGER NOT NULL,
+      productName TEXT NOT NULL,
+      unitPrice REAL NOT NULL,
+      quantity INTEGER NOT NULL,
+      FOREIGN KEY (movementId) REFERENCES movements(id) ON DELETE CASCADE
     )
   `).run();
 }
@@ -79,6 +94,7 @@ function normalizeProductImages() {
 
 ensureProductsTable();
 ensureMovementsTable();
+ensureMovementItemsTable();
 seedProductsIfEmpty();
 normalizeProductImages();
 

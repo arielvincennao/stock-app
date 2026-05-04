@@ -7,7 +7,7 @@ const {
   updateProduct,
   deleteProduct,
 } = require("../repositories/productRepository");
-const { listMovements, createMovement } = require("../repositories/movementRepository");
+const { listMovements, getMovementDetail, createMovement, deleteMovement } = require("../repositories/movementRepository");
 const { pickAndStoreProductImage } = require("../services/imageStorage");
 
 function registerProductHandlers() {
@@ -16,7 +16,9 @@ function registerProductHandlers() {
   ipcMain.handle("update-product", (event, id, product) => updateProduct(id, product));
   ipcMain.handle("delete-product", (event, id) => deleteProduct(id));
   ipcMain.handle("get-movements", () => listMovements());
+  ipcMain.handle("get-movement-detail", (event, id) => getMovementDetail(id));
   ipcMain.handle("add-movement", (event, movement) => createMovement(movement));
+  ipcMain.handle("delete-movement", (event, id) => deleteMovement(id));
   ipcMain.handle("pick-and-store-image", () => pickAndStoreProductImage());
 }
 

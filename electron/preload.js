@@ -12,8 +12,12 @@ contextBridge.exposeInMainWorld("api", {
     ipcRenderer.invoke("delete-product", id),
   getMovements: () =>
     ipcRenderer.invoke("get-movements"),
+  getMovementDetail: (id) =>
+    ipcRenderer.invoke("get-movement-detail", id),
   addMovement: (movement) =>
     ipcRenderer.invoke("add-movement", movement),
+  deleteMovement: (id) =>
+    ipcRenderer.invoke("delete-movement", id),
   pickAndStoreImage: () =>
     ipcRenderer.invoke("pick-and-store-image"),
 });
